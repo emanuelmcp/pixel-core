@@ -2,9 +2,11 @@ package io.github.emanuelmcp.pixelCore.infra.dao.repository;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.emanuelmcp.pixelCore.domain.BackpackEntity;
+import io.github.emanuelmcp.pixelCore.domain.Backpack;
+import io.github.emanuelmcp.pixelCore.infra.dao.entity.BackpackEntity;
 import io.github.emanuelmcp.pixelCore.domain.repository.BackpackRepository;
 import io.github.emanuelmcp.pixelCore.infra.dao.BackpackDao;
+import java.util.Optional;
 import java.util.UUID;
 import org.jdbi.v3.core.Jdbi;
 
@@ -18,22 +20,21 @@ public class JdbiBackpackRepository implements BackpackRepository {
   }
 
   @Override
-  public BackpackEntity findByUuid(UUID uuid) {
-    return jdbi.withExtension(BackpackDao.class, dao -> dao.findByUuid(uuid));
+  public Backpack findByUuid(UUID uuid) {
+    return jdbi.withExtension(BackpackDao.class, dao -> {
+      BackpackEntity backpackEntity = dao.findByUuid(uuid);
+      return new Backpack(backpackEntity.getItemData());
+    });
   }
 
   @Override
-  public boolean existsByUuid(UUID uuid) {
-    return jdbi.withExtension(BackpackDao.class, dao -> dao.existsByUuid(uuid));
-  }
-
-  @Override
-  public void save(UUID uuid, BackpackEntity backpackEntity) {
-    jdbi.useExtension(BackpackDao.class, dao -> dao.save(uuid, backpackEntity));
-  }
-
-  @Override
-  public void update(UUID uuid, BackpackEntity data) {
-    jdbi.useExtension(BackpackDao.class, dao -> dao.update(uuid, data));
+  public void saveOrUpdate(UUID uuid, Backpack entity) {
+    jdbi.useExtension(BackpackDao.class, dao -> {
+      BackpackEntity existing = dao.findByUuid(uuid);
+      Optional.ofNullable(existing).ifPresentOrElse(
+          e -> dao.update(uuid, new BackpackEntity(entity.itemData())),
+          () -> dao.save(uuid, new BackpackEntity(entity.itemData()))
+      );
+    });
   }
 }

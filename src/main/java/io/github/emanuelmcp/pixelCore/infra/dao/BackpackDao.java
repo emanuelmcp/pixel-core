@@ -1,6 +1,6 @@
 package io.github.emanuelmcp.pixelCore.infra.dao;
 
-import io.github.emanuelmcp.pixelCore.domain.BackpackEntity;
+import io.github.emanuelmcp.pixelCore.infra.dao.entity.BackpackEntity;
 import java.util.UUID;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
