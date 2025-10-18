@@ -27,23 +27,22 @@ public class BackpackService {
   public void saveBackpack(UUID uuid, VirtualInventory inventory) {
     try {
       String base64 = Base64.getEncoder().encodeToString(inventory.serialize());
-      Backpack entity = Optional.ofNullable(repository.findByUuid(uuid))
-          .orElseGet(() -> new Backpack(base64));
-      //entity.setItemData(base64);
-      repository.saveOrUpdate(uuid, entity);
+      Backpack entity = repository.findByUuid(uuid).orElseGet(() -> new Backpack(base64));
+      Backpack withItemData = entity.setItemData(base64);
+      repository.saveOrUpdate(uuid, withItemData);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error al guardar la mochila de " + uuid, e);
     }
   }
 
   public VirtualInventory loadOrCreateBackpack(UUID uuid) {
-    return Optional.ofNullable(repository.findByUuid(uuid))
+    return repository.findByUuid(uuid)
         .filter(b -> !b.isInvalid())
         .map(this::loadInventoryFromBackpack)
         .orElseGet(() -> new VirtualInventory(DEFAULT_SIZE));
   }
 
-  private VirtualInventory loadInventoryFromBackpack(Backpack backpack) {
+  public VirtualInventory loadInventoryFromBackpack(Backpack backpack) {
     try {
       byte[] data = Base64.getDecoder().decode(backpack.itemData().trim());
       if (data.length < 20) {

@@ -20,10 +20,11 @@ public class JdbiBackpackRepository implements BackpackRepository {
   }
 
   @Override
-  public Backpack findByUuid(UUID uuid) {
+  public Optional<Backpack> findByUuid(UUID uuid) {
     return jdbi.withExtension(BackpackDao.class, dao -> {
       BackpackEntity backpackEntity = dao.findByUuid(uuid);
-      return new Backpack(backpackEntity.getItemData());
+      return Optional.ofNullable(backpackEntity)
+          .map(be -> new Backpack(be.getItemData()));
     });
   }
 

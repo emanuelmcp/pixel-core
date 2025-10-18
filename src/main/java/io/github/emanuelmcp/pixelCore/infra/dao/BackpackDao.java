@@ -13,9 +13,6 @@ public interface BackpackDao {
   @SqlQuery("SELECT player_uuid, item_data FROM backpack WHERE player_uuid = :uuid")
   BackpackEntity findByUuid(@Bind("uuid") UUID uuid);
 
-  @SqlQuery("SELECT EXISTS (SELECT 1 FROM backpack WHERE player_uuid = :uuid)")
-  boolean existsByUuid(@Bind("uuid") UUID uuid);
-
   @SqlUpdate("INSERT INTO backpack (player_uuid, item_data) VALUES (:uuid, :b.itemData) ON CONFLICT DO NOTHING")
   void save(@Bind("uuid") UUID uuid, @BindBean("b") BackpackEntity backpackEntity);
 
