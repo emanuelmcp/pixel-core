@@ -1,0 +1,4 @@
+name: pixel-core
+version: '1.0-SNAPSHOT'
+main: io.github.emanuelmcp.pixelCore.PixelCore
+api-version: '1.21'
