@@ -11,6 +11,7 @@ import xyz.xenondevs.invui.gui.Gui;
 import xyz.xenondevs.invui.inventory.VirtualInventory;
 import xyz.xenondevs.invui.window.Window;
 
+@SuppressWarnings("unused")
 @CommandAlias("backpack")
 public class BackpackCommand extends BaseCommand implements Listener {
   private static final String BACKPACK_TITLE = "🎒 Tu Mochila";
