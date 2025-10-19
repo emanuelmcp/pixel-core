@@ -2,10 +2,9 @@ package io.github.emanuelmcp.pixelCore.infra.listener;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.emanuelmcp.pixelCore.app.BackpackService;
+import io.github.emanuelmcp.pixelCore.application.BackpackService;
 import io.github.emanuelmcp.pixelCore.domain.Backpack;
 import io.github.emanuelmcp.pixelCore.domain.repository.BackpackRepository;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,10 +16,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import xyz.xenondevs.invui.inventory.VirtualInventory;
-import xyz.xenondevs.invui.inventory.event.UpdateReason;
 
 @Singleton
 public class PlayerDeathListener implements Listener {
+
   private static final Logger LOGGER = Logger.getLogger(PlayerDeathListener.class.getName());
 
   private final BackpackRepository backpackRepository;
@@ -33,31 +32,32 @@ public class PlayerDeathListener implements Listener {
   }
 
   @EventHandler
-  public void onPlayerQuit(PlayerDeathEvent event) {
-    Player player = event.getEntity();
-    dropBackpackItems(player);
+  public void onPlayerDeath(PlayerDeathEvent event) {
+    dropBackpackItems(event.getEntity());
   }
 
-  public void dropBackpackItems(Player player) {
-    UUID uuid = player.getUniqueId();
+  private void dropBackpackItems(Player player) {
+    UUID playerId = player.getUniqueId();
+    backpackRepository.findByUuid(playerId)
+        .filter(backpack -> !backpack.isInvalid())
+        .ifPresent(backpack -> handleBackpackDrop(player, backpack));
+  }
+
+  private void handleBackpackDrop(Player player, Backpack backpack) {
     try {
-      Optional<Backpack> optional = backpackRepository.findByUuid(uuid);
-      if (optional.isEmpty() || optional.get().isInvalid()) {
-        return;
-      }
-      VirtualInventory inventory = backpackService.loadInventoryFromBackpack(optional.get());
-      World world = player.getWorld();
-      Location deathLocation = player.getLocation();
-      for (int i = 0; i < inventory.getSize(); i++) {
-        ItemStack item = inventory.getItem(i);
-        if (item != null && item.getType().isItem()) {
-          world.dropItemNaturally(deathLocation, item.clone());
-          inventory.setItem(UpdateReason.SUPPRESSED, i, null);
-        }
-      }
-      backpackService.saveBackpack(uuid, inventory);
+      VirtualInventory inventory = backpackService.loadInventoryFromBackpack(backpack);
+      dropInventoryItems(player.getWorld(), player.getLocation(), inventory);
+      backpackService.saveBackpack(player.getUniqueId(), inventory);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error al dropear la mochila de " + player.getName(), e);
+    }
+  }
+
+  private void dropInventoryItems(World world, Location location, VirtualInventory inventory) {
+    for (ItemStack item : inventory.getItems()) {
+      if (item != null && item.getType().isItem()) {
+        world.dropItemNaturally(location, item.clone());
+      }
     }
   }
 }

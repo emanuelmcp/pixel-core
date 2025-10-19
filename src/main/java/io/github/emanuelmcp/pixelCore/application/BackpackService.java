@@ -1,4 +1,4 @@
-package io.github.emanuelmcp.pixelCore.app;
+package io.github.emanuelmcp.pixelCore.application;
 
 
 import com.google.inject.Inject;
@@ -15,7 +15,7 @@ import xyz.xenondevs.invui.inventory.VirtualInventory;
 @Singleton
 public class BackpackService {
   private static final Logger LOGGER = Logger.getLogger(BackpackService.class.getName());
-  private static final int DEFAULT_SIZE = 27;
+  private static final int DEFAULT_SIZE = 27; // TODO: hacerlo configurable, para que puedas comprar mochilas de mayor tamaño
 
   private final BackpackRepository repository;
 

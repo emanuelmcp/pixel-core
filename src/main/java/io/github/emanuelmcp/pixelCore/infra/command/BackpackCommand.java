@@ -4,7 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.Default;
 import com.google.inject.Inject;
-import io.github.emanuelmcp.pixelCore.app.BackpackService;
+import io.github.emanuelmcp.pixelCore.application.BackpackService;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import xyz.xenondevs.invui.gui.Gui;
