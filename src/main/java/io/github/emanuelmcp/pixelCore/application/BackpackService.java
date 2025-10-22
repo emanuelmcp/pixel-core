@@ -8,7 +8,6 @@ import io.github.emanuelmcp.pixelCore.domain.repository.BackpackRepository;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import xyz.xenondevs.invui.inventory.VirtualInventory;
@@ -28,11 +27,9 @@ public class BackpackService {
   public void saveBackpack(UUID uuid, VirtualInventory inventory) {
     try {
       String base64 = Base64.getEncoder().encodeToString(inventory.serialize());
-      CompletableFuture.runAsync(() -> {
-        Backpack entity = repository.findByUuid(uuid).orElseGet(() -> new Backpack(base64));
-        Backpack withItemData = entity.setItemData(base64);
-        repository.saveOrUpdate(uuid, withItemData);
-      });
+      Backpack entity = repository.findByUuid(uuid).orElseGet(() -> new Backpack(base64));
+      Backpack withItemData = entity.setItemData(base64);
+      repository.saveOrUpdate(uuid, withItemData);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error al guardar la mochila de " + uuid, e);
     }
