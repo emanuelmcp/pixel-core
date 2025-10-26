@@ -3,6 +3,7 @@ package io.github.emanuelmcp.pixelCore.infra.di;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import io.github.emanuelmcp.pixelCore.infra.listener.InventoryCloseListener;
 import io.github.emanuelmcp.pixelCore.infra.listener.PlayerDeathListener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -22,5 +23,6 @@ public class ListenerInitializer implements Initializer {
   @Override
   public void init(@NotNull Injector injector) {
     pluginManager.registerEvents(injector.getInstance(PlayerDeathListener.class), plugin);
+    pluginManager.registerEvents(injector.getInstance(InventoryCloseListener.class), plugin);
   }
 }
