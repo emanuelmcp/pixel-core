@@ -23,9 +23,9 @@ public class DatabaseBinderModule extends AbstractModule {
   public Jdbi provideJdbi() {
     HikariConfig config = new HikariConfig();
     config.setDriverClassName("org.postgresql.Driver");
-    config.setJdbcUrl("jdbc:postgresql://localhost:5432/eniac");
-    config.setUsername("eniac");
-    //config.setPassword("");
+    config.setJdbcUrl("jdbc:postgresql://localhost:5432/pixelcore");
+    config.setUsername("postgres");
+    config.setPassword("root");
     config.setMaximumPoolSize(10);
     config.setMinimumIdle(2);
     config.setIdleTimeout(30000);

@@ -20,8 +20,6 @@ repositories {
 
 compileJava {
     options.compilerArgs += ["-parameters"]
-    options.fork = true
-    options.forkOptions.executable = System.getProperty("java.home") + "/bin/javac"
 }
 
 dependencies {
